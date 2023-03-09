@@ -43,10 +43,4 @@ chmod +x /app/dockcheck*
 chmod +x /app/regctl
 mv /app/regctl /usr/bin/regctl
 
-/app/dockcheck
-
-while :
-do
-	echo "Press [CTRL+C] to stop.."
-	sleep 1
-done
+exec /app/dockcheck
