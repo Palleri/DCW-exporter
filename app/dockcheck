@@ -1,4 +1,8 @@
 #!/bin/bash
+
+trap "exit" SIGINT
+trap "exit" SIGTERM
+
 HOSTNAME=$(cat /etc/hostname)
 if [ "pg_isready -d postgres -U postgres -h $MAIN_DCW | grep -q 'accepting connections'" ]; then
 
