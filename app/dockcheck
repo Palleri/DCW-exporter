@@ -10,25 +10,24 @@ if [ "pg_isready -d postgres -U postgres -h $MAIN_DCW | grep -q 'accepting conne
 
 
 
-    EXPORTER=$(PGPASSWORD=$POSTGRES_PASSWORD psql -h $MAIN_DCW -U postgres -d postgres -AXtqc "SELECT HOST FROM EXPORTERS WHERE HOST='$HOSTNAME'";)
+    EXPORTER=$(PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -AXtqc "SELECT HOST FROM EXPORTERS WHERE HOST='$HOSTNAME'";)
 
     if [ "$EXPORTER" == "$HOSTNAME" ]; then
-        echo "Exporter already exists in database; exit"
+        echo "Exporter already exists in database; continue"
     else
-                PGPASSWORD=$POSTGRES_PASSWORD psql -h $MAIN_DCW -U postgres -d postgres -c "INSERT INTO EXPORTERS \
+                PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -c "INSERT INTO EXPORTERS \
                 (HOST,ACTIVE,DONE) \
-                VALUES('$HOSTNAME','true','false');" 
+                VALUES('$HOSTNAME','true','false');" > /dev/null 2>&1
     fi
 
 
     while true; do
-    check=$(PGPASSWORD=$POSTGRES_PASSWORD psql -h $MAIN_DCW -U postgres -d postgres -AXtqc "SELECT RUNNING FROM STATE WHERE RUNNING='true'";)
+    check=$(PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -AXtqc "SELECT RUNNING FROM STATE WHERE RUNNING='true'";)
     sleep .5
-    
-    echo "checking for running"
+
         if [[ $check == 'true' ]]; then
-        echo "state changed to running"    
-        PGPASSWORD=$POSTGRES_PASSWORD psql -h $MAIN_DCW -U postgres -d postgres -c "UPDATE EXPORTERS SET DONE='false';"
+        echo "Got signal to start update check"    
+        PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -c "UPDATE EXPORTERS SET DONE='false';" > /dev/null 2>&1
         else
         continue
         fi
@@ -41,35 +40,35 @@ if [ "pg_isready -d postgres -U postgres -h $MAIN_DCW | grep -q 'accepting conne
         EXCLUDE=/app/EXCLUDE
         if [ -f "$EXCLUDE" ]; then
                 EXCLUDE=$(</app/EXCLUDE)
-                /app/dockcheck.sh -e $EXCLUDE 
+                /app/dockcheck.sh -e $EXCLUDE > /dev/null 2>&1
                 
 
                 else
         #If exclude is not present
-                /app/dockcheck.sh 
+                /app/dockcheck.sh > /dev/null 2>&1
                 
         fi
     #Insert into database with hostname + containers
             cat GotUpdates.txt | while read -r line ; do
-            PGPASSWORD=$POSTGRES_PASSWORD psql -h $MAIN_DCW -U postgres -d postgres -c "INSERT INTO CONTAINERS \
+            PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -c "INSERT INTO CONTAINERS \
             (HOST,NAME,LATEST,ERROR,NEW) \
-            VALUES('$HOSTNAME','$line','false','false','true');"
+            VALUES('$HOSTNAME','$line','false','false','true');" > /dev/null 2>&1
             done
             
             cat NoUpdates.txt | while read -r line ; do
-            PGPASSWORD=$POSTGRES_PASSWORD psql -h $MAIN_DCW -U postgres -d postgres -c "INSERT INTO CONTAINERS \
+            PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -c "INSERT INTO CONTAINERS \
             (HOST,NAME,LATEST,ERROR,NEW) \
-            VALUES('$HOSTNAME','$line','true','false','false');" 
+            VALUES('$HOSTNAME','$line','true','false','false');" > /dev/null 2>&1
             done
         
             cat GotErrors.txt  | while read -r line ; do
-            PGPASSWORD=$POSTGRES_PASSWORD psql -h $MAIN_DCW -U postgres -d postgres -c "INSERT INTO CONTAINERS \
+            PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -c "INSERT INTO CONTAINERS \
             (HOST,NAME,LATEST,ERROR,NEW) \
-            VALUES('$HOSTNAME','$line','false','true','false');" 
+            VALUES('$HOSTNAME','$line','false','true','false');" > /dev/null 2>&1
             done
             
-PGPASSWORD=$POSTGRES_PASSWORD psql -h $MAIN_DCW -U postgres -d postgres -c "UPDATE EXPORTERS SET DONE='true';" 
-PGPASSWORD=$POSTGRES_PASSWORD psql -h $MAIN_DCW -U postgres -d postgres -c "UPDATE STATE SET RUNNING = 'false';" 
+PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -c "UPDATE EXPORTERS SET DONE='true';" > /dev/null 2>&1
+PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -c "UPDATE STATE SET RUNNING = 'false';" > /dev/null 2>&1
     done
 
 else

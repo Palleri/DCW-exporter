@@ -1,11 +1,10 @@
 #!/bin/sh
+trap "exit" SIGINT
+trap "exit" SIGTERM
 
-echo $POSTGRES_PASSWORD
-echo $MAIN_DCW
-
-echo "# Starting Dockcheck-web #"
-echo "# Checking for new updates #"
+echo "# Starting Dockcheck-Exporter"
 echo "# This might take a while, it depends on how many containers are running #"
+echo "Will send information to " $MAIN_DCW
 
 if [ -n "$HOSTNAME" ]; then
         echo $HOSTNAME > /etc/hostname
