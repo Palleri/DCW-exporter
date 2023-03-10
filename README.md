@@ -1,6 +1,6 @@
 # DCW-exporter
 
-A exporter to DCW (dockcheck-web).  
+A exporter to DCW [dockcheck-web](https://github.com/Palleri/DCW)
 DCW-exporter will trigger when main DCW is running update check.
 
 ## Dependencies:
