@@ -4,7 +4,7 @@ trap "exit" SIGTERM
 
 echo "# Starting Dockcheck-Exporter"
 echo "# This might take a while, it depends on how many containers are running #"
-echo "Will send information to " $MAIN_DCW
+echo "Will send information to" $MAIN_DCW
 
 if [ -n "$HOSTNAME" ]; then
         echo $HOSTNAME > /etc/hostname
