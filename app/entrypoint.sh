@@ -28,7 +28,7 @@ if [ "$NOTIFY" = "true" ]; then
     fi
 
     if [ -n "$EXCLUDE" ]; then
-    echo $EXCLUDE > /app/EXCLUDE
+        echo $EXCLUDE > /app/EXCLUDE
     fi
 
     if [ "$NOTIFY_DEBUG" = "true" ]; then
