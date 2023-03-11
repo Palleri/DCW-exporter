@@ -42,4 +42,9 @@ chmod +x /app/dockcheck*
 chmod +x /app/regctl
 mv /app/regctl /usr/bin/regctl
 
-exec /app/dockcheck
+if [ -n "$EXCLUDE" ]; then
+    exec /app/dockcheck -e $EXCLUDE
+    else
+    exec /app/dockcheck
+fi
+
