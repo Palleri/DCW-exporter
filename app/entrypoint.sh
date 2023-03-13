@@ -26,7 +26,7 @@ fi
 cd /app && tar xzvf /app/docker.tgz > /dev/null 2>&1 && cp /app/docker/* /usr/bin/ > /dev/null 2>&1
 chmod +x /app/dockcheck*
 chmod +x /app/regctl
-mv /app/regctl /usr/bin/regctl
+cp /app/regctl /usr/bin/regctl
 exec /app/dockcheck
 
 
