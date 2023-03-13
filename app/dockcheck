@@ -5,8 +5,8 @@ trap "exit" SIGTERM
 
 HOSTNAME=$(cat /etc/hostname)
 if [ "pg_isready -d postgres -U postgres -h $MAIN_DCW | grep -q 'accepting connections'" ]; then
-
-  EXPORTER=$(PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -AXtqc "SELECT HOST FROM EXPORTERS WHERE HOST='$HOSTNAME'";)
+  echo "Connected to $MAIN_DCW"
+  EXPORTER=$(PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -AXtqc "SELECT HOST FROM EXPORTERS WHERE HOST='$HOSTNAME';")
 
   if [ "$EXPORTER" == "$HOSTNAME" ]; then
     echo "Exporter already exists in database; continue"
@@ -17,11 +17,11 @@ if [ "pg_isready -d postgres -U postgres -h $MAIN_DCW | grep -q 'accepting conne
   fi
 
   while true; do
-    check=$(PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -AXtqc "SELECT RUNNING FROM STATE WHERE RUNNING='true'";)
+    check=$(PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -AXtqc "SELECT RUNNING FROM STATE WHERE RUNNING='true';")
     sleep .5
     if [[ $check == 'true' ]]; then
       echo "Got signal to start update check"    
-      PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -c "UPDATE EXPORTERS SET DONE='false';" > /dev/null 2>&1
+      PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -c "UPDATE EXPORTERS SET DONE='false' WHERE host='$HOSTNAME';" > /dev/null 2>&1
     else
       continue
     fi
@@ -57,7 +57,7 @@ if [ "pg_isready -d postgres -U postgres -h $MAIN_DCW | grep -q 'accepting conne
     done < GotErrors.txt
     rm -f GotErrors.txt
 
-    PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -c "UPDATE EXPORTERS SET DONE='true';" > /dev/null 2>&1
+    PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -c "UPDATE EXPORTERS SET DONE='true' WHERE host='$HOSTNAME';" > /dev/null 2>&1
     PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -c "UPDATE STATE SET RUNNING = 'false';" > /dev/null 2>&1
   done
 
