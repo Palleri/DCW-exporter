@@ -13,7 +13,7 @@ if [ "pg_isready -d postgres -U postgres -h $MAIN_DCW | grep -q 'accepting conne
   else
     PGPASSWORD=$TOKEN psql -h $MAIN_DCW -U postgres -d postgres -c "INSERT INTO EXPORTERS \
     (HOST,ACTIVE,DONE) \
-    VALUES('$HOSTNAME','true','false');" > /dev/null 2>&1
+    VALUES('$HOSTNAME','true','true');" > /dev/null 2>&1
   fi
 
   while true; do
