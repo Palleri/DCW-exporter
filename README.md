@@ -16,6 +16,7 @@ services:
   dcw-exporter:
     container_name: dcw-exporter
     image: 'palleri/dcw-exporter:latest'
+    hostname: dcw_exporter                #optional, set the hostname that will be displayed in the ui
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
