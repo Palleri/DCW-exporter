@@ -52,3 +52,4 @@ Set `TOKEN: superSecretPassw0rd` to the same password in DCW
 * Contributors
   - [Mag37](https://github.com/Mag37) 👑
   - [t0rnis](https://github.com/t0rnis) 🪖🐛
+  - [aSilentSniper](https://github.com/aSilentSniper)
