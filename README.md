@@ -22,7 +22,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /etc/localtime:/etc/localtime:ro
     environment:
-      TOKEN: superSecretPassw0rd                        // required // Main DCW token
+      TOKEN: superSecretPassw0rd
       MAIN_DCW: 192.168.1.5                             // required // Ip address to the main DCW
       HTTP_PROXY: "http://proxy.homelab.net:3128"       // optional
       HTTPS_PROXY: "http://proxy.homelab.net:3128"      // optional
